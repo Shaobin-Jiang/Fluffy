@@ -71,7 +71,7 @@ final class Trial extends TrialOrLoop {
   /// which receives also one argument which is the [BuildContext]. This return
   /// function then returns a [Widget], which is then displayed upon the running
   /// of this trial.
-  Widget Function(BuildContext) Function(Fluffy) content;
+  Widget Function(BuildContext context) Function(Fluffy fluffy) content;
 
   /// How long to wait before starting the trial.
   ///
@@ -87,7 +87,7 @@ final class Trial extends TrialOrLoop {
   ///
   /// This has a higher priority than [startTrialAfter], so that if both are set,
   /// the return value of [startTrialAfterFunc] would be used.
-  Duration Function(Fluffy)? startTrialAfterFunc;
+  Duration Function(Fluffy fluffy)? startTrialAfterFunc;
 }
 
 /// Creates a loop, which is a collection of [Trial]s and [Loop]s.
@@ -228,7 +228,7 @@ final class Fluffy {
   final List<Map<String, dynamic>> _data = [];
 
   /// Value notifier, indicating the content of the current trial.
-  final _content = ValueNotifier<Widget Function(BuildContext)?>(null);
+  final _content = ValueNotifier<Widget Function(BuildContext context)?>(null);
 
   /// The start time of the **current** trial in milliseconds
   int _currentTrialStartTime = -1;
@@ -624,7 +624,7 @@ class _FluffyContentState extends State<FluffyContent> {
       valueListenable: widget.root._content,
       builder: (
         BuildContext context,
-        Widget Function(BuildContext)? value,
+        Widget Function(BuildContext context)? value,
         Widget? widget,
       ) {
         return Container(
