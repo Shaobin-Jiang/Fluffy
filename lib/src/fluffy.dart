@@ -58,7 +58,7 @@ final class Trial extends TrialOrLoop {
   /// Returns a deep copy of the provided [Trial].
   Trial.copy(Trial trial)
       : content = trial.content,
-      startTrialAfter = trial.startTrialAfter,
+        startTrialAfter = trial.startTrialAfter,
         startTrialAfterFunc = trial.startTrialAfterFunc {
     skip = trial.skip;
     repeat = trial.repeat;
