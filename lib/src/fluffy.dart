@@ -51,10 +51,15 @@ final class Trial extends TrialOrLoop {
   /// Creates a trial with the given [content].
   Trial({
     required this.content,
+    this.startTrialAfter = Duration.zero,
+    this.startTrialAfterFunc,
   });
 
   /// Returns a deep copy of the provided [Trial].
-  Trial.copy(Trial trial) : content = trial.content {
+  Trial.copy(Trial trial)
+      : content = trial.content,
+      startTrialAfter = trial.startTrialAfter,
+        startTrialAfterFunc = trial.startTrialAfterFunc {
     skip = trial.skip;
     repeat = trial.repeat;
   }
@@ -67,6 +72,22 @@ final class Trial extends TrialOrLoop {
   /// function then returns a [Widget], which is then displayed upon the running
   /// of this trial.
   Widget Function(BuildContext) Function(Fluffy) content;
+
+  /// How long to wait before starting the trial.
+  ///
+  /// A blank screen is shown during this period.
+  ///
+  /// This has a lower priority than [startTrialAfterFunc], so that if both are
+  /// set, the return value of [startTrialAfterFunc] would be used.
+  Duration startTrialAfter;
+
+  /// How long to wait before starting the trial.
+  ///
+  /// A blank screen is shown during this period.
+  ///
+  /// This has a higher priority than [startTrialAfter], so that if both are set,
+  /// the return value of [startTrialAfterFunc] would be used.
+  Duration Function(Fluffy)? startTrialAfterFunc;
 }
 
 /// Creates a loop, which is a collection of [Trial]s and [Loop]s.
@@ -368,7 +389,20 @@ class FluffyTrial extends FluffyNode {
     bool willSkip = skip();
 
     if (!willSkip) {
-      root._content.value = trial.content(root);
+      Duration startTrialAfter;
+      if (trial.startTrialAfterFunc != null) {
+        startTrialAfter = trial.startTrialAfterFunc!(root);
+      } else {
+        startTrialAfter = trial.startTrialAfter;
+      }
+
+      if (startTrialAfter.inMilliseconds > 0) {
+        root._content.value = null;
+      }
+
+      Timer(startTrialAfter, () {
+        root._content.value = trial.content(root);
+      });
     } else {
       // If the trial should be skipped, then skip `repeat` all together and
       // proceed directly to the next node specified by `next`.
