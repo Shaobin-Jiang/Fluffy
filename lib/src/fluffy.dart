@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:fluffy/src/fluffy_data.dart';
 
 /// Describes the basic configuration for the nodes in the experiment.
 ///
@@ -223,9 +224,7 @@ final class Fluffy {
   late FluffyTrial _currentTrial;
 
   /// Storage of experiment data
-  ///
-  /// TODO: change to FluffyData object
-  final List<Map<String, dynamic>> _data = [];
+  final FluffyData _data = FluffyData();
 
   /// Value notifier, indicating the content of the current trial.
   final _content = ValueNotifier<Widget Function(BuildContext context)?>(null);
@@ -271,7 +270,7 @@ final class Fluffy {
     data['startTime'] = _currentTrialStartTime;
     data['endTime'] = finishTime;
 
-    _data.add(data);
+    _data.addDataItem(data);
 
     _currentTrial._next()?.run();
   }
