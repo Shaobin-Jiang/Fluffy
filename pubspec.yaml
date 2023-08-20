@@ -10,6 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  csv: ^5.0.2
+  excel: ^2.1.0
+  path: any
+  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:
