@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
+import 'package:excel/excel.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -69,18 +70,19 @@ class FluffyData {
 
   /// Converts data to csv string.
   String toCsv() {
-    List<String> keys = _getAllKeys();
-    List<List<dynamic>> csvList = [keys];
+    return const ListToCsvConverter().convert(_toTable());
+  }
 
-    for (var item in _data) {
-      var entry = <String>[];
-      for (String key in keys) {
-        entry.add(item.containsKey(key) ? item[key] : '');
-      }
-      csvList.add(entry);
+  /// Converts data to excel bytes.
+  List<int>? toExcel() {
+    Excel excel = Excel.createExcel();
+    Sheet sheetObject = excel['Sheet1'];
+
+    for (var entry in _toTable()) {
+      sheetObject.appendRow(entry);
     }
 
-    return const ListToCsvConverter().convert(csvList);
+    return excel.save();
   }
 
   /// Converts data to json string.
@@ -112,10 +114,13 @@ class FluffyData {
   ///
   ///  * Android: external storage
   ///  * iOS / Linux / macOS / Windows: downloads
-  Future<void> saveAsExcel({
+  Future<File> saveAsExcel({
     required String fileName,
     String? directory,
-  }) async {}
+  }) async {
+    File file = await _createDataFile(fileName: fileName, directory: directory);
+    return file.writeAsBytes(toExcel() ?? []);
+  }
 
   /// Saves data as json file.
   ///
@@ -173,5 +178,25 @@ class FluffyData {
     }
 
     return keys;
+  }
+
+  /// Formats the stored data into a table like List.
+  ///
+  /// The first list in the returned list is all the keys that have appeared in
+  /// [_data], while the rest are the value of the keys. If a key is not present
+  /// in a data item, its value is set to `null`.
+  List<List<dynamic>> _toTable() {
+    List<String> keys = _getAllKeys();
+    List<List<dynamic>> table = [keys];
+
+    for (var item in _data) {
+      var entry = <dynamic>[];
+      for (String key in keys) {
+        entry.add(item.containsKey(key) ? item[key] : '');
+      }
+      table.add(entry);
+    }
+
+    return table;
   }
 }
