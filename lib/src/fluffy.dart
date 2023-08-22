@@ -22,10 +22,10 @@ import './fluffy_data.dart';
 /// classes in the source code.
 abstract final class TrialOrLoop {
   /// Repeats the current node if the return value is `true`
-  bool Function() repeat = () => false;
+  bool Function(Fluffy fluffy) repeat = (Fluffy fluffy) => false;
 
   /// Skips the current node if the return value is `true`
-  bool Function() skip = () => false;
+  bool Function(Fluffy fluffy) skip = (Fluffy fluffy) => false;
 }
 
 /// Creates a trial.
@@ -316,7 +316,7 @@ abstract class FluffyNode {
   ///  * [FluffyTrial], this is copied from the [Trial] the node parses
   ///  * [FluffyLoopStart], this is copied from the [Loop] the node parses
   ///  * [FluffyLoopEnd], this will stick to the default value
-  bool Function() skip = () => false;
+  bool Function(Fluffy fluffy) skip = (Fluffy fluffy) => false;
 
   /// Returns the current node if this returns `true`
   ///
@@ -325,7 +325,7 @@ abstract class FluffyNode {
   ///  * [FluffyTrial], this is copied from the [Trial] the node parses
   ///  * [FluffyLoopStart], this will stick to the default value
   ///  * [FluffyLoopEnd], this is copied from the [Loop] the node parses
-  bool Function() repeat = () => false;
+  bool Function(Fluffy fluffy) repeat = (Fluffy fluffy) => false;
 
   /// Runs the [FluffyNode].
   ///
@@ -385,7 +385,7 @@ class FluffyTrial extends FluffyNode {
   @override
   void run() {
     root._currentTrial = this;
-    bool willSkip = skip();
+    bool willSkip = skip(root);
 
     if (!willSkip) {
       Duration startTrialAfter;
@@ -415,7 +415,7 @@ class FluffyTrial extends FluffyNode {
   /// `false` or repeat the current [FluffyTrial] should it return `true`.
   @override
   FluffyNode? _next() {
-    return repeat() ? this : next;
+    return repeat(root) ? this : next;
   }
 }
 
@@ -425,10 +425,15 @@ class FluffyTrial extends FluffyNode {
 /// [FluffyLoopStart] is set in the [FluffyLoop.spreadLoop] method, copied from
 /// the corresponding [Loop.skip].
 class FluffyLoopStart extends FluffyNode {
+  FluffyLoopStart({required this.root});
+
   /// The paired [FluffyLoopEnd] that marks the end of the same [FluffyLoop].
   ///
   /// This value is automatically set in the [FluffyLoop.spreadLoop] method.
   late final FluffyLoopEnd pair;
+
+  /// The [Fluffy] instance to which the current [FluffyLoopStart] is bound.
+  final Fluffy root;
 
   /// Proceeds directly to the next [FluffyNode].
   @override
@@ -442,7 +447,7 @@ class FluffyLoopStart extends FluffyNode {
   /// proceed to the [next] trial.
   @override
   FluffyNode? _next() {
-    return skip() ? pair.next : next;
+    return skip(root) ? pair.next : next;
   }
 }
 
@@ -452,10 +457,15 @@ class FluffyLoopStart extends FluffyNode {
 /// [FluffyLoopEnd] is set in the [FluffyLoop.spreadLoop] method, copied from
 /// the corresponding [Loop.repeat].
 class FluffyLoopEnd extends FluffyNode {
+  FluffyLoopEnd({required this.root});
+
   /// The paired [FluffyLoopStart] that marks the start of the same [FluffyLoop].
   ///
   /// This value is automatically set in the [FluffyLoop.spreadLoop] method.
   late final FluffyLoopStart pair;
+
+  /// The [Fluffy] instance to which the current [FluffyLoopEnd] is bound.
+  final Fluffy root;
 
   /// Proceeds directly to the next [FluffyNode].
   @override
@@ -469,7 +479,7 @@ class FluffyLoopEnd extends FluffyNode {
   /// proceed to the [next] trial.
   @override
   FluffyNode? _next() {
-    return repeat() ? pair.next : next;
+    return repeat(root) ? pair.next : next;
   }
 }
 
@@ -550,8 +560,9 @@ class FluffyLoop {
   /// insert the spread result into a chain of [FluffyTrial]s, and thus this method
   /// returns a [FluffyLoopSummary] object that provides such info.
   FluffyLoopSummary spreadLoop() {
-    FluffyLoopStart loopFirstNode = FluffyLoopStart()..skip = loop.skip;
-    FluffyLoopEnd loopLastNode = FluffyLoopEnd()
+    FluffyLoopStart loopFirstNode = FluffyLoopStart(root: root)
+      ..skip = loop.skip;
+    FluffyLoopEnd loopLastNode = FluffyLoopEnd(root: root)
       ..next = next
       ..repeat = loop.repeat;
 
