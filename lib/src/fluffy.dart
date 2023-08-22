@@ -615,6 +615,10 @@ class FluffyLoop {
 }
 
 /// The [Widget] that wraps the experiment content.
+///
+/// This wrapper also wraps in it the content that does not change as the
+/// experiment goes on, such as the outermost [Container] widget and the [Center]
+/// widget within.
 class FluffyContent extends StatefulWidget {
   const FluffyContent({
     super.key,
@@ -642,16 +646,46 @@ class _FluffyContentState extends State<FluffyContent> {
           child: Center(
             child: value == null ? Container() : value(context),
           ),
-        );
-      },
-    );
+}
+
+/// The [Widget] that wraps the experiment content which changes as the experiment
+/// proceeds.
+class FluffyInnerContent extends StatefulWidget {
+  const FluffyInnerContent({
+    super.key,
+    required this.root,
+    required this.child,
+  });
+
+  final Fluffy root;
+
+  final Widget Function(BuildContext context) child;
+
+  @override
+  State<FluffyInnerContent> createState() => _FluffyInnerContentState();
+}
+
+class _FluffyInnerContentState extends State<FluffyInnerContent> {
+  void updateTrialStartTime() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
+      widget.root._currentTrialStartTime = widget.root._getTimeInMilliseconds();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child(context);
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
-      widget.root._currentTrialStartTime = widget.root._getTimeInMilliseconds();
-    });
+    updateTrialStartTime();
+  }
+
+  @override
+  void didUpdateWidget(FluffyInnerContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    updateTrialStartTime();
   }
 }
