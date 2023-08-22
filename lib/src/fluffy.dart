@@ -224,7 +224,7 @@ final class Fluffy {
   late FluffyTrial _currentTrial;
 
   /// Storage of experiment data
-  final FluffyData _data = FluffyData();
+  final FluffyData data = FluffyData();
 
   /// Value notifier, indicating the content of the current trial.
   final _content = ValueNotifier<Widget Function(BuildContext context)?>(null);
@@ -270,7 +270,7 @@ final class Fluffy {
     data['startTime'] = _currentTrialStartTime;
     data['endTime'] = finishTime;
 
-    _data.addDataItem(data);
+    this.data.addDataItem(data);
 
     _currentTrial._next()?.run();
   }
