@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:fluffy/src/fluffy_data.dart';
+import './fluffy_data.dart';
 
 /// Describes the basic configuration for the nodes in the experiment.
 ///
