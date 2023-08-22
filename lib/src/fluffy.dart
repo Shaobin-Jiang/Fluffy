@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import './fluffy_data.dart';
 
@@ -639,13 +640,32 @@ class _FluffyContentState extends State<FluffyContent> {
       builder: (
         BuildContext context,
         Widget Function(BuildContext context)? value,
-        Widget? widget,
+        Widget? _,
       ) {
+        Size size = MediaQuery.of(context).size;
+        double smallerOfWidthAndHeight = min(size.width, size.height);
+        double defaultFontSize = smallerOfWidthAndHeight / 20;
+        TextStyle defaultTextStyle = TextStyle(
+          color: Colors.black,
+          decoration: TextDecoration.none,
+          fontSize: defaultFontSize,
+          fontWeight: FontWeight.normal,
+        );
+
         return Container(
           color: Colors.white,
           child: Center(
-            child: value == null ? Container() : value(context),
+            child: DefaultTextStyle(
+              style: defaultTextStyle,
+              child: value == null
+                  ? Container()
+                  : FluffyInnerContent(root: widget.root, child: value),
+            ),
           ),
+        );
+      },
+    );
+  }
 }
 
 /// The [Widget] that wraps the experiment content which changes as the experiment
