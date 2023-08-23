@@ -14,6 +14,8 @@ dependencies:
   excel: ^2.1.0
   path: any
   path_provider: ^2.0.15
+  soundpool: ^2.4.0
+  vibration: ^1.8.1
 
 dev_dependencies:
   flutter_test:
