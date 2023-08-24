@@ -7,8 +7,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Data storage utility of the Fluffy library.
-///
-/// {@category Introduction}
 class FluffyData {
   /// Creates an instance of [FluffyData] with an empty data set.
   FluffyData();

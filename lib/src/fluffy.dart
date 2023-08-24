@@ -47,8 +47,6 @@ abstract final class TrialOrLoop {
 ///   },
 /// );
 /// ```
-///
-/// {@category Introduction}
 final class Trial extends TrialOrLoop {
   /// Creates a trial with the given [content].
   Trial({
@@ -108,8 +106,6 @@ final class Trial extends TrialOrLoop {
 ///   children: [trial1, trial2, trial3],
 /// );
 /// ```
-///
-/// {@category Introduction}
 final class Loop extends TrialOrLoop {
   /// Creates a loop with the given [children].
   ///
@@ -169,8 +165,6 @@ final class Loop extends TrialOrLoop {
 ///   children: [trial1, loop1, trial2, loop2],
 /// );
 /// ```
-///
-/// {@category Introduction}
 final class MainLoop extends Loop {
   /// Creates a main loop with the given [children].
   ///
@@ -207,8 +201,6 @@ final class MainLoop extends Loop {
 ///  * [Trial], for how to create a single trial
 ///  * [Loop], for how to create a loop
 ///  * [MainLoop], for how to create a main loop for the experiment
-///
-/// {@category Introduction}
 final class Fluffy {
   /// Creates a [Fluffy] instance based on the provided [MainLoop] object
   Fluffy({
