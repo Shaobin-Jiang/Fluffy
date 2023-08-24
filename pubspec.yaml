@@ -1,0 +1,35 @@
+name: fluffy
+description: A flutter package for creating psychology experiments on mobile devices
+version: 0.0.1
+homepage: https://github.com/Shaobin-Jiang/Fluffy
+repository: https://github.com/Shaobin-Jiang/Fluffy
+issue_tracker: https://github.com/Shaobin-Jiang/Fluffy/issues
+
+environment:
+  sdk: '>=3.0.6 <4.0.0'
+  flutter: ">=1.17.0"
+
+topics:
+  - psychology
+  - experiment
+
+dependencies:
+  flutter:
+    sdk: flutter
+  csv: ^5.0.2
+  excel: ^2.1.0
+  path: ^1.8.3
+  path_provider: ^2.0.15
+  soundpool: ^2.4.0
+  vibration: ^1.8.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
