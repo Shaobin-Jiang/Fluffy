@@ -241,11 +241,6 @@ final class Fluffy {
     });
   }
 
-  /// Start the automatic test of the experiment
-  ///
-  /// TODO: implement this
-  void test() {}
-
   /// Finishes the current trial, stores data and proceeds to the next trial.
   ///
   /// When creating a [Trial], you need to call this to signify the end of the
